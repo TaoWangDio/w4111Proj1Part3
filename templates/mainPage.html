@@ -29,7 +29,7 @@
   
     {% for n in data %}
     <form method="POST" action="/visit">
-      <div>id: {{n['merchant_id']}} name: {{n['category']}} address: {{n['address']}} star: {{n['star']}} vip: {{n['is_vip']}}
+      <div>id: {{n['merchant_id']}} name: {{n['merchant_name']}} category: {{n['category']}}address: {{n['address']}} star: {{n['star']}} vip: {{n['is_vip']}}
         <input type="hidden" name="id" value="{{n['merchant_id']}}"><button type="submit">visit</button>
       </div>
 
