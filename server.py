@@ -18,7 +18,6 @@ Read about it online.
 
 import os
 import random
-from cv2 import cartToPolar
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response,session
