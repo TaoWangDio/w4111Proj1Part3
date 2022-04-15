@@ -1,0 +1,43 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>My Cart</h1>
+
+
+
+<p><a href="/">log out</a></p>
+<p><a href="/mainpage">back</a></p>
+
+
+
+<form method="POST" action="/delete">
+<div>
+  
+  {% for n in items %}
+  <h4>product_id: {{n['id']}}, product_name: {{n['name']}}</h4>
+  <p>
+  Price: {{n['price']}}
+  </p>
+  <input type="hidden" name="id" value="{{n['id']}}">
+  <input type="hidden" name="name" value="{{n['name']}}">
+  <input type="hidden" name="price" value="{{n['price']}}">
+  <button type="submit">delete this product</button>
+  {% endfor %}
+  
+</div>
+</form>
+<h1>Total price: {{total}}</h1>
+<form method="POST" action="/check">
+    <button type="submit">check</button>
+</form>
+</body>
+
+
+</html>

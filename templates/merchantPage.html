@@ -1,0 +1,64 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>Home Page</h1>
+
+
+
+<p><a href="/">log out</a></p>
+<p><a href="/mainpage">back</a></p>
+<p><a href="/cartpage">See my cart</a></p>
+
+
+<h1>Merchant: {{merchant_inf['merchant_id']}}</h1>
+<form method="POST" action="/comment">
+<h3>comments</h3>
+
+  <div>
+    <p>Please rate between 0 and 100:<input type="text" name="rating"></p>
+  
+    <p>comment:<input type="text" name="comment" style="height: 100px;width: 500px;"><p><button type="submit">post comment</button></p></p>
+  </div>
+</form>
+
+<div>
+  
+  {% for comment in comments %}
+  <h4>User: {{comment['user_id']}}, Rating: {{comment['rating']}}</h4>
+  <p>
+  {{comment['content']}}
+  </p>
+  {% endfor %}
+</div>
+
+<h1>Menu</h1>
+<!-- product_id, product_name, price -->
+<form method="POST" action="/add">
+<div>
+  
+  {% for n in menu %}
+  <h4>product_id: {{n['product_id']}}, product_name: {{n['product_name']}}</h4>
+  <p>
+  Price: {{n['price']}}
+
+  </p>
+  <input type="hidden" name="id" value="{{n['product_id']}}">
+  <input type="hidden" name="name" value="{{n['product_name']}}">
+  <input type="hidden" name="price" value="{{n['price']}}">
+  <button type="submit">add to cart</button>
+  {% endfor %}
+</div>
+</form>
+
+
+</body>
+
+
+</html>

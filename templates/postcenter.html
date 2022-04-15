@@ -1,0 +1,65 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>Post Center</h1>
+
+
+<p>Current account: {{session.account}}</a></p>
+<p><a href="/">Log out</a></p>
+<p><a href="/mainpage">back</a></p>
+
+<form method="POST" action="/post">
+    <h3>write your post</h3>
+    
+      <div>
+      
+        <p>post:<input type="text" name="post" style="height: 100px;width: 500px;"><p><button type="submit">send your post</button></p></p>
+      </div>
+</form>
+
+<h2>Friends' posts</h2>
+
+<div>
+  
+    {% for n in posts %}
+    <form method="POST" action="/like">
+        <!-- user_id,post_id, content, likes  -->
+      <div>id: {{n['user_id']}} 
+          <p>content: {{n['content']}} </p>
+          <p>likes: {{n['likes']}} </p>
+        <input type="hidden" name="id" value="{{n['post_id']}}"><button type="submit">like this</button>
+      </div>
+
+    </form>
+    {% endfor %}
+</div>
+
+
+
+<h2>My posts</h2>
+<div>
+  
+    {% for n in yourposts %}
+    
+    <div>
+        <p>content: {{n['content']}} </p>
+        <p>likes: {{n['likes']}} </p>
+
+    {% endfor %}
+</div>
+
+
+
+
+
+</body>
+
+
+</html>
