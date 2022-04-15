@@ -200,12 +200,16 @@ def check():
       content+=t['name']
       content+=','
 
+    try:
+      cmd='INSERT INTO Orders_make_send VALUES ((:v1),(:v2),(:v3),to_date ( (:v4) , \'YYYY-MM-DD\' ) ,(:v5),(:v6))'
+      g.conn.execute(text(cmd),v1=random.randint(0,99999999),v2=session['account'],v3=m,v4=datetime.datetime.now().strftime('%Y-%m-%d'),v5=price,v6=content)
+  
+  
+      CART=[]
+    except Exception as e:
+      print(e)
+      return redirect('/cartpage')
 
-    cmd='INSERT INTO Orders_make_send VALUES ((:v1),(:v2),(:v3),to_date ( (:v4) , \'YYYY-MM-DD\' ) ,(:v5),(:v6))'
-    g.conn.execute(text(cmd),v1=random.randint(0,99999999),v2=session['account'],v3=m,v4=datetime.datetime.now().strftime('%Y-%m-%d'),v5=price,v6=content)
-  
-  
-  CART=[]
  
 
   return redirect('/cartpage')
@@ -296,19 +300,30 @@ def add():
 def post():
   
   content = request.form.get('post')
-  
-  cmd='INSERT INTO Posts_edit VALUES ((:v1),(:v2),(:v3),(:v4))'
-  g.conn.execute(text(cmd),v1=random.randint(0,99999999),v2=session['account'],v3=content,v4=0)
+  try:
+    cmd='INSERT INTO Posts_edit VALUES ((:v1),(:v2),(:v3),(:v4))'
+    g.conn.execute(text(cmd),v1=random.randint(0,99999999),v2=session['account'],v3=content,v4=0)
+  except Exception as e:
+    print(e)
+    return redirect('/postpage')
+
 
   return redirect('/postpage')
 
 @app.route('/like',methods=['POST'])
 def like():
-  postId=int(request.form.get('id'))
-  cmd='''UPDATE Posts_edit
-  SET likes=likes+1 
-  WHERE post_id=(:v1)'''
-  g.conn.execute(text(cmd),v1=postId)
+  try:
+    postId=int(request.form.get('id'))
+  
+
+    cmd='''UPDATE Posts_edit
+    SET likes=likes+1 
+    WHERE post_id=(:v1)'''
+    g.conn.execute(text(cmd),v1=postId)
+  except Exception as e:
+    print(e)
+    
+
   return redirect('/postpage')
 
 @app.route('/postpage')
@@ -358,7 +373,11 @@ def postpage():
 
 @app.route('/follow',methods=['POST'])
 def follow():
-  userId=int(request.form.get('account'))
+  try:
+    userId=int(request.form.get('account'))
+  except ValueError:
+    return redirect('/mainpage')
+
   cmd='INSERT INTO Follow VALUES ((:v1),(:v2))'
   g.conn.execute(text(cmd),v1=session['account'],v2=userId)
   return redirect('/mainpage')
@@ -367,7 +386,17 @@ def follow():
 
 @app.route('/searchuser',methods=['POST'])
 def searchuser():
-  userId=int(request.form.get('id'))
+  try:
+    userId=int(request.form.get('id'))
+  except ValueError:
+    context = {}
+    context['users']=results
+    if len(results)>0:
+      note='User found'
+    else:
+      note='don\'t find this user'
+    context['note']=note
+    return render_template("peoplesearch.html",**context)
   cmd='SELECT * FROM Users WHERE user_id=(:v1)'
   cursor =g.conn.execute(text(cmd),v1=userId)
 
@@ -401,7 +430,11 @@ def searchuser():
 @app.route('/comment',methods=['POST'])
 def comment():
   merchant_id=session['merchant']
-  rating = int(request.form.get('rating'))
+  try:
+    rating = int(request.form.get('rating'))
+  except ValueError:  
+      return redirect('/mainpage')
+
   content = request.form.get('comment')
   cmd='INSERT INTO Comments_edit_write VALUES ((:v1),(:v2),(:v3),(:v4),(:v5))'
   g.conn.execute(text(cmd),v1=random.randint(0,99999999),v2=session['account'],v3=merchant_id,v4=rating,v5=content)
@@ -416,7 +449,7 @@ def comment():
 def mainpage():
   # session['cart']=[]
   session['merchant']=None
-  cmd='SELECT merchant_id, category, address, star, is_vip FROM Merchants '
+  cmd='SELECT merchant_id, merchant_name,category, address, star, is_vip FROM Merchants '
   cursor =g.conn.execute(text(cmd))
   results=[]
   for result in cursor:
